@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shop — Single Origin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#141414;--cream:#E7E5E0;--paper:#F3F1EC;--muted:#6B6963;--line:rgba(20,20,20,.18);
+  --accent:#2E5C8A;--mono:'IBM Plex Mono',ui-monospace,monospace;--sans:'DM Sans',system-ui,sans-serif;--head:'Archivo',sans-serif;--mark:'Archivo Black',sans-serif;--pad:clamp(20px,4vw,64px)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit}
+button{font:inherit;color:inherit}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.muted{color:var(--muted)}
+.wrap{padding:0 var(--pad);max-width:1600px;margin:0 auto}
+.mark{font-family:var(--mark);line-height:.86;text-transform:uppercase;letter-spacing:-.01em}
+h1,h2,h3{font-family:var(--head);font-weight:700;text-transform:uppercase;line-height:.96}
+
+nav{position:sticky;top:0;z-index:20;background:rgba(231,229,224,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:28px;height:68px}
+nav .mark{font-size:20px;text-decoration:none}
+nav ul{display:flex;gap:26px;list-style:none;margin-left:auto}
+nav ul a{text-decoration:none} nav ul a:hover,nav ul a[aria-current]{color:var(--accent)}
+.bagbtn{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;border:1.5px solid var(--ink);border-radius:999px;padding:8px 16px;background:none;cursor:pointer}
+@media(max-width:820px){nav ul{display:none}.bagbtn{margin-left:auto}}
+
+.crumb{padding:22px 0}
+.crumb a{text-decoration:none;color:var(--muted)}
+
+/* product */
+.product{display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(24px,4vw,72px);align-items:start;padding-bottom:96px}
+.gallery{display:grid;grid-template-columns:88px 1fr;gap:14px;position:sticky;top:92px}
+.thumbs{display:flex;flex-direction:column;gap:10px}
+.thumbs button{padding:0;border:1.5px solid transparent;background:#d9d6cf;cursor:pointer;aspect-ratio:1;overflow:hidden}
+.thumbs button[aria-pressed=true]{border-color:var(--ink)}
+.thumbs img{width:100%;height:100%;object-fit:cover}
+.main{background:#d9d6cf;aspect-ratio:1.2;overflow:hidden;position:relative}
+.main img{width:100%;height:100%;object-fit:cover;transition:opacity .3s}
+.main .tag{position:absolute;left:16px;top:16px;background:var(--paper);padding:7px 11px}
+@media(max-width:960px){.product{grid-template-columns:1fr}.gallery{position:static;grid-template-columns:1fr}.thumbs{flex-direction:row;order:2}.thumbs button{width:72px}}
+
+.info .num{color:var(--accent);transition:color .3s}
+.info h1{font-family:var(--mark);font-weight:400;font-size:clamp(54px,6.4vw,104px);line-height:.88;margin:12px 0 14px}
+.info .lead{font-size:21px;max-width:520px}
+.rating{display:flex;gap:10px;align-items:center;margin-top:16px}
+.price{display:flex;align-items:baseline;gap:14px;margin:28px 0 6px}
+.price b{font-family:var(--head);font-size:44px;line-height:1}
+.price s{color:var(--muted)}
+.note{font-size:13px;color:var(--muted)}
+
+.group{margin-top:30px}
+.group>p{margin-bottom:12px;display:flex;justify-content:space-between}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.sw{display:flex;align-items:center;gap:10px;padding:10px 16px 10px 10px;border:1.5px solid var(--line);border-radius:999px;background:none;cursor:pointer}
+.sw i{width:22px;height:22px;border-radius:50%;display:block}
+.sw[aria-pressed=true]{border-color:var(--ink);background:var(--paper)}
+.formats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.fmt{text-align:left;padding:16px;border:1.5px solid var(--line);background:none;cursor:pointer;display:flex;flex-direction:column;gap:4px;min-height:118px}
+.fmt b{font-family:var(--head);text-transform:uppercase;font-size:17px}
+.fmt span{font-size:14px;color:var(--muted)}
+.fmt em{font-style:normal;font-family:var(--mono);font-size:13px;margin-top:auto}
+.fmt[aria-pressed=true]{border-color:var(--ink);background:var(--paper)}
+@media(max-width:520px){.formats{grid-template-columns:1fr}}
+
+.plan{display:grid;gap:10px}
+.opt{display:flex;gap:14px;align-items:flex-start;padding:16px;border:1.5px solid var(--line);cursor:pointer}
+.opt:has(input:checked){border-color:var(--ink);background:var(--paper)}
+.opt input{accent-color:var(--ink);margin-top:4px;width:18px;height:18px}
+.opt b{display:block}
+.opt span{font-size:14px;color:var(--muted)}
+.opt select{font:inherit;font-size:14px;margin-top:8px;padding:6px 10px;border:1px solid var(--line);background:var(--cream)}
+
+.buyrow{display:flex;gap:12px;margin-top:30px;align-items:stretch}
+.qty{display:flex;align-items:center;border:1.5px solid var(--ink);border-radius:999px}
+.qty button{width:46px;height:100%;background:none;border:0;font-size:20px;cursor:pointer}
+.qty output{min-width:28px;text-align:center;font-family:var(--mono)}
+.add{flex:1;font-family:var(--mono);font-size:14px;letter-spacing:.08em;text-transform:uppercase;padding:18px 24px;border-radius:999px;border:0;background:var(--accent);color:var(--paper);cursor:pointer;transition:background .3s,filter .2s}
+.add:hover{filter:brightness(1.1)}
+.perks{display:grid;grid-template-columns:repeat(3,1fr);margin-top:22px;border-top:1px solid var(--line)}
+.perks div{padding:14px 10px 0 0;font-size:14px;color:var(--muted)}
+.perks b{display:block;color:var(--ink);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:500}
+
+details{border-top:1px solid var(--line)}
+details:last-of-type{border-bottom:1px solid var(--line)}
+.acc{margin-top:36px}
+summary{list-style:none;cursor:pointer;padding:18px 0;display:flex;justify-content:space-between;font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+summary::after{content:"+";font-size:18px}
+details[open] summary::after{content:"–"}
+details .body{padding:0 0 22px;color:#333}
+.survey{display:grid;grid-template-columns:140px 1fr;row-gap:8px}
+.survey dt{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+
+/* band sections */
+.band{background:var(--accent);color:var(--paper);padding:clamp(64px,8vw,120px) 0;transition:background .4s}
+.band .grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1.5px solid rgba(243,241,236,.6)}
+.band .grid div{padding:24px 24px 0 0}
+.band .grid div+div{padding-left:24px;border-left:1px solid rgba(243,241,236,.3)}
+.band h2{font-size:clamp(34px,4.6vw,68px);margin-bottom:48px}
+.band b{font-family:var(--head);font-size:24px;text-transform:uppercase}
+.band p{margin-top:8px;opacity:.85}
+@media(max-width:820px){.band .grid{grid-template-columns:1fr}.band .grid div,.band .grid div+div{padding:18px 0;border-left:0;border-bottom:1px solid rgba(243,241,236,.3)}}
+
+.box{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,64px);align-items:center;padding-block:clamp(64px,8vw,120px)}
+.box img{width:100%;aspect-ratio:1.2;object-fit:cover}
+.box h2{font-size:clamp(34px,4.4vw,64px)}
+.box p{font-size:20px;margin:20px 0 28px;max-width:480px}
+.btn{display:inline-flex;font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:16px 24px;border-radius:999px;border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;text-decoration:none}
+.btn.ghost{background:none;color:var(--ink)}
+@media(max-width:820px){.box{grid-template-columns:1fr}}
+
+.others{padding-bottom:clamp(64px,8vw,120px)}
+.others h2{font-size:clamp(30px,3.6vw,52px);margin-bottom:32px}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(12px,1.6vw,24px)}
+.card{text-decoration:none;display:block;cursor:pointer;background:none;border:0;text-align:left;padding:0}
+.card img{width:100%;aspect-ratio:4/3;object-fit:cover;background:#d9d6cf;transition:transform .5s}
+.card .pic{overflow:hidden}
+.card:hover img{transform:scale(1.03)}
+.card .row{display:flex;justify-content:space-between;padding-top:14px;margin-top:14px;border-top:1.5px solid var(--ink)}
+.card h3{font-size:24px;margin-top:10px}
+@media(max-width:820px){.cards{grid-template-columns:1fr}}
+
+
+.merch{padding-bottom:clamp(64px,8vw,120px)}
+.merch .head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:32px}
+.merch h2{font-size:clamp(30px,3.6vw,52px)}
+.merch .head p{max-width:440px;color:var(--muted)}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,1.6vw,24px)}
+.mgrid img{width:100%;aspect-ratio:4/5;object-fit:cover;background:#d9d6cf}
+.mgrid .row{display:flex;justify-content:space-between;padding-top:14px;margin-top:14px;border-top:1.5px solid var(--ink)}
+.mgrid h3{font-size:24px;margin-top:10px}
+.mgrid p{color:var(--muted);margin-top:6px;font-size:15px}
+@media(max-width:820px){.mgrid{grid-template-columns:1fr}}
+footer{background:var(--ink);color:var(--paper);padding:56px 0 36px}
+footer .mark{font-size:clamp(64px,12vw,180px)}
+footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:36px;padding-top:18px;border-top:1px solid rgba(243,241,236,.25);color:#9a978f}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,10,10,.4);opacity:0;pointer-events:none;transition:opacity .3s;z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);background:var(--paper);z-index:41;transform:translateX(100%);transition:transform .35s;display:flex;flex-direction:column}
+.open .scrim{opacity:1;pointer-events:auto}.open .drawer{transform:none}
+.drawer header{display:flex;justify-content:space-between;align-items:center;padding:22px 24px;border-bottom:1px solid var(--line)}
+.drawer header button{background:none;border:0;font-size:26px;cursor:pointer;line-height:1}
+.lines{flex:1;overflow:auto;padding:8px 24px}
+.line{display:grid;grid-template-columns:72px 1fr auto;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);align-items:center}
+.line img{width:72px;height:72px;object-fit:cover}
+.line b{display:block;font-family:var(--head);text-transform:uppercase}
+.line span{font-size:14px;color:var(--muted)}
+.line .r{text-align:right}
+.line .r button{background:none;border:0;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);cursor:pointer;margin-top:6px}
+.empty{padding:40px 0;color:var(--muted)}
+.drawer footer{background:none;color:var(--ink);padding:20px 24px;border-top:1px solid var(--line)}
+.tot{display:flex;justify-content:space-between;font-family:var(--head);font-size:24px;text-transform:uppercase;margin-bottom:6px}
+.drawer .add{width:100%;margin-top:16px;background:var(--ink)}
+.chk{margin-top:12px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);min-height:1.4em}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,160%);background:var(--ink);color:var(--paper);padding:14px 22px;border-radius:999px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;transition:transform .35s;z-index:50}
+.toast.show{transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="mark">Single<br>Origin</a>
+    <ul class="mono">
+      <li><a href="index.html#origins">Origins</a></li>
+      <li><a href="index.html#five">5 seconds</a></li>
+      <li><a href="index.html#where">Campaign</a></li>
+      <li><a href="product.html" aria-current="page">Shop</a></li>
+    </ul>
+    <button class="bagbtn" id="bagbtn" type="button">Bag (0)</button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <p class="crumb mono"><a href="index.html">Home</a> / <a href="product.html">Shop</a> / <span id="crumbName">Chikmagalur</span></p>
+
+  <div class="product">
+    <div class="gallery">
+      <div class="thumbs" id="thumbs"></div>
+      <div class="main"><img id="mainImg" src="img/chik-kitchen.jpg" alt=""><span class="tag mono" id="tag">01 / Karnataka</span></div>
+    </div>
+
+    <div class="info">
+      <p class="mono num" id="num">01 / Karnataka · Arabica</p>
+      <h1 id="name">Chikmagalur</h1>
+      <p class="lead" id="lead">High-grown coffee from the Western Ghats. Freeze-dried at peak aroma, ready in five seconds.</p>
+      <p class="mono muted" style="margin-top:14px" id="notes">Tasting notes · chocolate · caramel</p>
+
+      <div class="price"><b id="price">₹499</b><s id="was" hidden></s><span class="mono muted" id="per">≈ ₹10 a cup</span></div>
+      <p class="note">Prices are proposed for this concept and include taxes.</p>
+
+      <div class="group">
+        <p class="mono"><span>Origin</span><span class="muted" id="originLabel">Chikmagalur</span></p>
+        <div class="swatches" id="swatches"></div>
+      </div>
+
+      <div class="group">
+        <p class="mono"><span>Format</span></p>
+        <div class="formats" id="formats"></div>
+      </div>
+
+      <div class="group">
+        <p class="mono"><span>How often</span></p>
+        <div class="plan">
+          <label class="opt"><input type="radio" name="plan" value="once" checked><div><b>One-time purchase</b><span>Just this order.</span></div></label>
+          <label class="opt"><input type="radio" name="plan" value="sub"><div><b>Refill subscription · save 10%</b><span>A refill pouch arrives before your tin runs out. Skip or cancel any time.</span><br>
+            <select id="freq" aria-label="Delivery frequency"><option>Every 3 weeks</option><option selected>Every 4 weeks</option><option>Every 6 weeks</option></select></div></label>
+        </div>
+      </div>
+
+      <div class="buyrow">
+        <div class="qty"><button type="button" id="minus" aria-label="Fewer">−</button><output id="q">1</output><button type="button" id="plus" aria-label="More">+</button></div>
+        <button class="add" id="add" type="button">Add to bag · ₹499</button>
+      </div>
+      <div class="perks">
+        <div><b>10-min delivery</b>On quick commerce in launch cities</div>
+        <div><b>Free shipping</b>On D2C orders over ₹799</div>
+        <div><b>Keep the tin</b>Refill it, don’t bin it</div>
+      </div>
+
+      <div class="acc">
+        <details open><summary>The origin</summary><div class="body"><dl class="survey" id="survey"></dl></div></details>
+        <details><summary>How to make it</summary><div class="body">1 · Add 1–2 tsp of crystals to your cup.<br>2 · Pour 150 ml of hot or chilled water, or milk.<br>3 · Stir for five seconds. No equipment needed.</div></details>
+        <details><summary>What’s inside</summary><div class="body">100% freeze-dried Arabica coffee from a single named origin. Nothing added. 100 g makes about 50 cups. Store the closed tin away from heat and light.</div></details>
+        <details><summary>Delivery and refills</summary><div class="body">Sold on our site and on quick commerce. Refill pouches are 100 g and fit the tin. Delivery times and prices are proposed and will be confirmed before launch.</div></details>
+      </div>
+    </div>
+  </div>
+</main>
+
+<section class="band">
+  <div class="wrap">
+    <h2>Why it’s worth<br>the five seconds.</h2>
+    <div class="grid">
+      <div><b>One named hill</b><p>Every tin comes from one estate region. Never a blend of places.</p></div>
+      <div><b>Freeze-dried</b><p>Gentler than spray-drying, so the origin’s character survives.</p></div>
+      <div><b>Hot or iced</b><p>Dissolves in hot water, cold water or milk. No machine, no lecture.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap box">
+  <img src="img/trio-flatlay.jpg" alt="Chikmagalur, Coorg and Araku tins laid out on a sunlit table with crystals and a cup of coffee">
+  <div>
+    <p class="mono muted">Can’t pick one?</p>
+    <h2>The Discovery Box.<br>Three hills, one box.</h2>
+    <p>Chikmagalur, Coorg and Araku in 30 g tins. Taste the route from the Western Ghats to the Araku Valley, then refill your favourite.</p>
+    <button class="btn" id="boxBtn" type="button">Add Discovery Box · ₹549</button>
+  </div>
+</section>
+
+<section class="wrap others">
+  <h2>The other origins</h2>
+  <div class="cards" id="cards"></div>
+</section>
+
+<section class="wrap merch">
+  <div class="head">
+    <h2>Collect the route.</h2>
+    <p>Merch is earned, not sold. Each refill gets you closer to the next piece.</p>
+  </div>
+  <div class="mgrid">
+    <figure><img src="img/merch-mug.jpg" alt="Blue enamel mug printed Single Origin Chikmagalur on an office desk"><figcaption><div class="row mono"><span>01 · Chikmagalur</span><span>Launch night</span></div><h3>Enamel origin mug</h3><p>The tin’s colour, for the desk. Given to every guest at Platform 5.</p></figcaption></figure>
+    <figure><img src="img/merch-tote.jpg" alt="Green tote printed 5 seconds to Coorg hanging on a Mumbai local train"><figcaption><div class="row mono"><span>02 · Coorg</span><span>3rd refill</span></div><h3>Commuter tote</h3><p>For the 08:40 local. The line on the front, Coorg’s contours below.</p></figcaption></figure>
+    <figure><img src="img/merch-pins.jpg" alt="Three enamel pins for Chikmagalur, Coorg and Araku on a ticket-style card"><figcaption><div class="row mono"><span>01 · 02 · 03</span><span>One per origin</span></div><h3>Route pin set</h3><p>One pin per origin tried. Collect all three to finish the route.</p></figcaption></figure>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="mono" style="color:#9a978f">Indian origins for everyday rituals.</p>
+    <div class="mark" style="margin-top:16px">Single<br>Origin</div>
+    <div class="row mono"><span>Chikmagalur · Coorg · Araku</span><span>Concept website · Brand pitch, Nov 2026</span><span>Origin without the wait.</span></div>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Your bag">
+  <header><span class="mono">Your bag</span><button type="button" id="close" aria-label="Close bag">×</button></header>
+  <div class="lines" id="lines"></div>
+  <footer>
+    <div class="tot"><span>Total</span><span id="total">₹0</span></div>
+    <p class="note" id="ship">Free shipping over ₹799.</p>
+    <button class="add" id="checkout" type="button">Checkout</button>
+    <p class="chk" id="chk"></p>
+  </footer>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const ORIGINS={
+ chikmagalur:{n:'Chikmagalur',i:0,c:'#2E5C8A',st:'Karnataka',lead:'High-grown coffee from the Western Ghats. Freeze-dried at peak aroma, ready in five seconds.',notes:'Tasting notes · chocolate · caramel',alt:'1,100 – 1,400 m',co:'13.3152° N, 75.7719° E',har:'Nov – Mar',grow:'High-grown',
+   imgs:[['img/chik-kitchen.jpg','Chikmagalur tin on a sunlit kitchen counter while hot water is poured over crystals'],['img/tin-chik-front.jpg','Front of the blue Chikmagalur tin'],['img/tin-chik-back.jpg','Back of the tin with origin survey label and how-to-make steps'],['img/merch-mug.jpg','Chikmagalur enamel mug on an office desk'],['img/sip.jpg','A woman sipping coffee and holding the Chikmagalur tin'],['img/poster-chik.jpg','Print ad: 5 seconds to Chikmagalur']]},
+ coorg:{n:'Coorg',i:1,c:'#3F7A3B',st:'Karnataka',lead:'Shade-grown coffee from the misty hills of Coorg. Freeze-dried at peak aroma, ready in five seconds.',notes:'Tasting notes · to be confirmed with the estate',alt:'900 – 1,200 m',co:'12.4244° N, 75.7397° E',har:'Oct – Jan',grow:'Shade-grown',
+   imgs:[['img/hero.jpg','Coorg tin on a Mumbai kitchen counter with coffee plants growing around it'],['img/tin-coorg-front.jpg','Front of the green Coorg tin'],['img/tin-coorg-back.jpg','Back of the Coorg tin'],['img/coorg-flatlay.jpg','Front and back of the Coorg tin on a sunlit table with crystals'],['img/merch-tote.jpg','Coorg tote bag on a Mumbai local train'],['img/train.jpg','Coorg tin on a Mumbai local train seat'],['img/poster-coorg.jpg','Print ad: 5 seconds to Coorg']]},
+ araku:{n:'Araku',i:2,c:'#C9612B',st:'Andhra Pradesh',lead:'Forest-grown coffee from the Araku Valley. Freeze-dried at peak aroma, ready in five seconds.',notes:'Tasting notes · to be confirmed with the estate',alt:'1,300 – 1,600 m',co:'18.3272° N, 82.8708° E',har:'Nov – Feb',grow:'Forest-grown',
+   imgs:[['img/airport.jpg','Araku tin on an airport bench with ferns and soil'],['img/tin-araku-front.jpg','Front of the orange Araku tin'],['img/tin-araku-back.jpg','Back of the Araku tin'],['img/araku-pair.jpg','Araku tin front and back beside an iced coffee'],['img/poster-araku.jpg','Print ad: 5 seconds to Araku']]}
+};
+const FORMATS={tin:{n:'Tin',d:'100 g · about 50 cups',p:499},refill:{n:'Refill pouch',d:'100 g · fits your tin',p:399},duo:{n:'Tin + refill',d:'200 g · about 100 cups',p:849}};
+let key='chikmagalur',fmt='tin',qty=1;
+const $=id=>document.getElementById(id);
+const inr=n=>'₹'+n.toLocaleString('en-IN');
+
+// bag storage (per viewer, optional)
+let bag=[];
+try{bag=JSON.parse(localStorage.getItem('so-bag')||'[]')}catch(e){bag=[]}
+function save(){try{localStorage.setItem('so-bag',JSON.stringify(bag))}catch(e){}}
+
+function render(){
+  const o=ORIGINS[key];
+  document.documentElement.style.setProperty('--accent',o.c);
+  $('crumbName').textContent=o.n;$('name').textContent=o.n;$('originLabel').textContent=o.n;
+  $('num').textContent=String(o.i+1).padStart(2,'0')+' / '+o.st+' · Arabica';
+  $('tag').textContent=String(o.i+1).padStart(2,'0')+' / '+o.st;
+  $('lead').textContent=o.lead;$('notes').textContent=o.notes;
+  $('survey').innerHTML=`<dt>Region</dt><dd>${o.n}, ${o.st}</dd><dt>Altitude</dt><dd>${o.alt}</dd><dt>Coordinates</dt><dd>${o.co}</dd><dt>Harvest</dt><dd>${o.har}</dd><dt>Grown</dt><dd>${o.grow} Arabica</dd>`;
+  document.title=o.n+' — Single Origin';
+  // thumbs
+  $('thumbs').innerHTML=o.imgs.map((m,i)=>`<button type="button" aria-pressed="${i==0}" data-i="${i}" aria-label="View image ${i+1}"><img src="${m[0]}" alt=""></button>`).join('');
+  setMain(0);
+  // swatches
+  $('swatches').innerHTML=Object.entries(ORIGINS).map(([k,v])=>`<button type="button" class="sw" aria-pressed="${k==key}" data-k="${k}"><i style="background:${v.c}"></i>${v.n}</button>`).join('');
+  // cards
+  $('cards').innerHTML=Object.entries(ORIGINS).filter(([k])=>k!=key).map(([k,v])=>`<button type="button" class="card" data-k="${k}"><div class="pic"><img src="${v.imgs[1][0]}" alt="${v.n} tin"></div><div class="row mono"><span>${String(v.i+1).padStart(2,'0')} / ${v.st}</span><span>From ₹399</span></div><h3>${v.n}</h3></button>`).join('');
+  price();
+}
+function setMain(i){
+  const m=ORIGINS[key].imgs[i],img=$('mainImg');img.style.opacity=0;
+  setTimeout(()=>{img.src=m[0];img.alt=m[1];img.style.opacity=1},150);
+  document.querySelectorAll('#thumbs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.i==i));
+}
+function unit(){const f=FORMATS[fmt];const sub=document.querySelector('input[name=plan]:checked').value==='sub';return sub?Math.round(f.p*.9):f.p;}
+function price(){
+  const f=FORMATS[fmt],u=unit(),sub=u!==f.p;
+  $('formats').innerHTML=Object.entries(FORMATS).map(([k,v])=>`<button type="button" class="fmt" aria-pressed="${k==fmt}" data-f="${k}"><b>${v.n}</b><span>${v.d}</span><em>${inr(v.p)}</em></button>`).join('');
+  $('price').textContent=inr(u);$('was').hidden=!sub;$('was').textContent=inr(f.p);
+  const cups=fmt==='duo'?100:50;$('per').textContent='≈ ₹'+Math.round(u/cups)+' a cup';
+  $('q').textContent=qty;$('add').textContent='Add to bag · '+inr(u*qty);
+}
+$('thumbs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setMain(+b.dataset.i)});
+$('swatches').addEventListener('click',e=>{const b=e.target.closest('.sw');if(b){key=b.dataset.k;history.replaceState(null,'','#'+key);render()}});
+$('cards').addEventListener('click',e=>{const b=e.target.closest('.card');if(b){key=b.dataset.k;history.replaceState(null,'','#'+key);render();scrollTo({top:0,behavior:'smooth'})}});
+$('formats').addEventListener('click',e=>{const b=e.target.closest('.fmt');if(b){fmt=b.dataset.f;price()}});
+document.querySelectorAll('input[name=plan]').forEach(r=>r.addEventListener('change',price));
+$('minus').onclick=()=>{qty=Math.max(1,qty-1);price()};
+$('plus').onclick=()=>{qty=Math.min(12,qty+1);price()};
+
+function addLine(l){
+  const ex=bag.find(b=>b.id===l.id);if(ex)ex.q+=l.q;else bag.push(l);save();drawBag();openBag();
+}
+$('add').onclick=()=>{
+  const o=ORIGINS[key],f=FORMATS[fmt],sub=document.querySelector('input[name=plan]:checked').value==='sub';
+  addLine({id:key+'-'+fmt+(sub?'-sub':''),name:o.n,desc:f.n+(sub?' · subscription, '+$('freq').value.toLowerCase():''),img:o.imgs[1][0],p:unit(),q:qty});
+};
+$('boxBtn').onclick=()=>addLine({id:'box',name:'Discovery Box',desc:'3 × 30 g · Chikmagalur, Coorg, Araku',img:'img/trio-flatlay.jpg',p:549,q:1});
+
+function drawBag(){
+  const n=bag.reduce((a,b)=>a+b.q,0),t=bag.reduce((a,b)=>a+b.q*b.p,0);
+  $('bagbtn').textContent='Bag ('+n+')';$('total').textContent=inr(t);
+  $('ship').textContent=t===0?'Free shipping over ₹799.':t>=799?'Free shipping unlocked.':inr(799-t)+' more for free shipping.';
+  $('lines').innerHTML=bag.length?bag.map((b,i)=>`<div class="line"><img src="${b.img}" alt=""><div><b>${b.name}</b><span>${b.desc}</span><br><span>Qty ${b.q}</span></div><div class="r">${inr(b.p*b.q)}<br><button type="button" data-i="${i}">Remove</button></div></div>`).join(''):'<p class="empty">Your bag is empty. Pick a hill.</p>';
+  $('chk').textContent='';
+}
+$('lines').addEventListener('click',e=>{const b=e.target.closest('button[data-i]');if(b){bag.splice(+b.dataset.i,1);save();drawBag()}});
+function openBag(){document.body.classList.add('open')}
+function closeBag(){document.body.classList.remove('open')}
+$('bagbtn').onclick=openBag;$('close').onclick=closeBag;$('scrim').onclick=closeBag;
+addEventListener('keydown',e=>{if(e.key==='Escape')closeBag()});
+$('checkout').onclick=()=>{$('chk').textContent=bag.length?'Concept site: checkout is not live, so nothing is charged.':'Add something first.'};
+
+function fromHash(){const h=location.hash.slice(1);if(ORIGINS[h])key=h;}
+fromHash();addEventListener('hashchange',()=>{fromHash();render()});
+render();drawBag();
+</script>
+</body>
+</html>
